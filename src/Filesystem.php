@@ -70,8 +70,6 @@ class Filesystem
     private function _connectToDisks(): void
     {
 
-        throw new ConfigurationException('Invalid disk configuration: v1 obsolete');
-
         foreach ($this->config as $disk_name => $disk_config) {
 
             // Check validity
@@ -79,6 +77,14 @@ class Filesystem
             if (!isset($disk_config['adapter']) || !class_exists($this->adapters_namespace . $disk_config['adapter'])) {
 
                 throw new ConfigurationException('Invalid disk configuration (' . $disk_name . '): Adapter not specified or does not exist');
+
+            }
+
+            if (isset($disk_config['default']) && true === $disk_config['default']) { // If default disk
+
+                $this->default_disk_name = $disk_name;
+
+                $this->current_disk_name = $disk_name;
 
             }
 
